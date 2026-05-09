@@ -13,7 +13,6 @@ def _load_prompt(name: str) -> str:
 
 
 def _extract_json(text: str) -> dict:
-    # Strip markdown code fences if present
     text = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("```").strip()
     return json.loads(text)
 
@@ -32,28 +31,33 @@ async def interpret_allergy(allergies: list[str], notes: str) -> dict:
     return _extract_json(response.content)
 
 
-async def analyze_restaurant(
-    allergy_profile: dict,
-    review_text: str,
-    restaurant_name: str = "",
-    cuisine: str = "",
-    website_text: str = "",
-) -> dict:
+async def summarize_experiences(
+    restaurant_name: str,
+    allergies: list[str],
+    experiences: list,
+) -> str:
+    if not experiences:
+        return "No reports yet from people with these allergies. Be the first to share your experience."
+
     client = BackboardClient(api_key=os.environ["BACKBOARD_API_KEY"])
-    website_section = f"\nWEBSITE / MENU TEXT (may contain dish names and ingredients):\n{website_text[:2000]}" if website_text else ""
+
+    experiences_text = "\n".join(
+        f"- Outcome: {e.outcome}"
+        + (f", Dish: {e.dish_name}" if e.dish_name else "")
+        + (f", Notes: {e.notes}" if e.notes else "")
+        for e in experiences
+    )
+
     system_prompt = (
-        _load_prompt("restaurant_analyzer.txt")
-        .replace("{profile}", json.dumps(allergy_profile, indent=2))
-        .replace("{restaurant_name}", restaurant_name or "Unknown")
-        .replace("{cuisine}", cuisine or "Unknown")
-        .replace("{reviews}", review_text or "No reviews available.")
-        .replace("{website_text_section}", website_section)
+        _load_prompt("experience_summarizer.txt")
+        .replace("{restaurant_name}", restaurant_name or "this restaurant")
+        .replace("{allergies}", ", ".join(allergies) if allergies else "various allergies")
+        .replace("{experiences_text}", experiences_text)
     )
 
     response = await client.send_message(
-        "Analyze this restaurant for the user's allergy profile as instructed.",
+        "Summarize these community reports.",
         system_prompt=system_prompt,
-        json_output=True,
         stream=False,
     )
-    return _extract_json(response.content)
+    return (response.content or "").strip()

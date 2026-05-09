@@ -10,20 +10,39 @@ export interface RestaurantSummary {
   distance_meters: number;
   rating: number | null;
   photo_url: string | null;
-  cached_risk: "low" | "medium" | "high" | null;
+  experience_count: number;
 }
 
-export interface Dish {
-  name: string;
-  classification: "SAFE" | "CAUTION" | "AVOID";
-  reason: string;
+export interface Experience {
+  id: number;
+  place_id: string;
+  dish_name: string;
+  allergies: string[];
+  outcome: "safe" | "reaction" | "cautious";
+  notes: string;
+  created_at: string;
 }
 
-export interface RestaurantAnalysis {
-  dishes: Dish[];
-  warnings: string[];
-  overall_risk: "low" | "medium" | "high";
-  summary: string;
+export interface ExperienceSummary {
+  total: number;
+  safe_count: number;
+  reaction_count: number;
+  cautious_count: number;
+  ai_insight: string;
+}
+
+export interface ExperiencesResponse {
+  summary: ExperienceSummary;
+  experiences: Experience[];
+}
+
+export interface SubmitExperienceRequest {
+  place_id: string;
+  restaurant_name: string;
+  dish_name?: string;
+  allergies: string[];
+  outcome: "safe" | "reaction" | "cautious";
+  notes?: string;
 }
 
 export async function interpretAllergy(
@@ -58,23 +77,25 @@ export async function getNearbyRestaurants(
   return data.restaurants as RestaurantSummary[];
 }
 
-export async function analyzeRestaurant(
+export async function getExperiences(
   placeId: string,
-  profile: AllergyProfile,
-  restaurantName?: string,
-  restaurantAddress?: string,
-  restaurantCuisine?: string
-): Promise<RestaurantAnalysis> {
-  const res = await fetch(`${API_BASE}/api/restaurants/${placeId}/analyze`, {
+  allergies: string[]
+): Promise<ExperiencesResponse> {
+  const params = new URLSearchParams();
+  if (allergies.length) params.set("allergies", allergies.join(","));
+  const res = await fetch(`${API_BASE}/api/experiences/${placeId}?${params}`);
+  if (!res.ok) throw new Error(`Failed to load experiences: ${res.status}`);
+  return res.json() as Promise<ExperiencesResponse>;
+}
+
+export async function submitExperience(
+  data: SubmitExperienceRequest
+): Promise<Experience> {
+  const res = await fetch(`${API_BASE}/api/experiences`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      allergy_profile: profile,
-      restaurant_name: restaurantName ?? "",
-      restaurant_address: restaurantAddress ?? "",
-      restaurant_cuisine: restaurantCuisine ?? "",
-    }),
+    body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error(`Analysis failed: ${res.status}`);
-  return res.json() as Promise<RestaurantAnalysis>;
+  if (!res.ok) throw new Error(`Failed to submit experience: ${res.status}`);
+  return res.json() as Promise<Experience>;
 }

@@ -7,24 +7,35 @@
     "distance_meters": 320,
     "rating": 4.2,
     "photo_url": null,
-    "overall_risk": "high",
-    "analysis": {
-      "dishes": [
-        {"name": "Pad Thai", "classification": "AVOID", "reason": "Contains peanuts and fish sauce; peanut garnish standard"},
-        {"name": "Green Curry", "classification": "AVOID", "reason": "Shrimp paste and fish sauce used in curry base"},
-        {"name": "Spring Rolls (Fried)", "classification": "CAUTION", "reason": "Served with peanut dipping sauce; cross-contamination risk"},
-        {"name": "Steamed Jasmine Rice", "classification": "SAFE", "reason": "Plain rice, no cross-contamination reported"},
-        {"name": "Tom Yum Soup", "classification": "AVOID", "reason": "Contains shrimp and fish sauce"},
-        {"name": "Mango Sticky Rice", "classification": "CAUTION", "reason": "May share prep area; coconut milk only but kitchen uses peanuts extensively"}
-      ],
-      "warnings": [
-        "Multiple reviewers mention peanuts are used extensively throughout the kitchen",
-        "One reviewer reported an allergic reaction and confirmed shared wok cooking",
-        "Staff confirmed they cannot guarantee peanut-free dishes"
-      ],
-      "overall_risk": "high",
-      "summary": "Thai Garden poses a high risk for peanut and shellfish allergy sufferers. Peanuts are used throughout the kitchen and staff cannot guarantee allergen-free preparation. Only plain steamed rice is reliably safe."
-    }
+    "experiences": [
+      {
+        "place_id": "demo_thai_garden",
+        "restaurant_name": "Thai Garden",
+        "dish_name": "Pad Thai",
+        "allergies": ["peanuts"],
+        "outcome": "reaction",
+        "notes": "Ordered without peanuts but the sauce had them. Mild reaction. Staff were apologetic but didn't know all ingredients.",
+        "created_at": "2026-04-20 14:30:00"
+      },
+      {
+        "place_id": "demo_thai_garden",
+        "restaurant_name": "Thai Garden",
+        "dish_name": "Steamed Rice",
+        "allergies": ["peanuts", "shellfish"],
+        "outcome": "safe",
+        "notes": "Plain jasmine rice only. Asked chef to use a clean bowl. Fine.",
+        "created_at": "2026-04-15 19:00:00"
+      },
+      {
+        "place_id": "demo_thai_garden",
+        "restaurant_name": "Thai Garden",
+        "dish_name": "",
+        "allergies": ["peanuts"],
+        "outcome": "cautious",
+        "notes": "Ate steamed veggies. Informed staff of allergy. They were helpful but warned the kitchen uses peanut oil in most dishes.",
+        "created_at": "2026-03-30 20:15:00"
+      }
+    ]
   },
   {
     "place_id": "demo_italian_bistro",
@@ -34,23 +45,26 @@
     "distance_meters": 780,
     "rating": 4.6,
     "photo_url": null,
-    "overall_risk": "medium",
-    "analysis": {
-      "dishes": [
-        {"name": "Margherita Pizza", "classification": "SAFE", "reason": "Tomato, mozzarella, basil — no common allergens beyond dairy"},
-        {"name": "Spaghetti Aglio e Olio", "classification": "SAFE", "reason": "Olive oil, garlic, pasta — no allergens listed"},
-        {"name": "Pesto Pasta", "classification": "AVOID", "reason": "Traditional pesto contains pine nuts (tree nuts)"},
-        {"name": "Tiramisu", "classification": "CAUTION", "reason": "Contains eggs and dairy; cross-contamination with tree nuts possible"},
-        {"name": "Bruschetta", "classification": "SAFE", "reason": "Tomato, basil, olive oil on bread — no allergens"},
-        {"name": "Caesar Salad", "classification": "CAUTION", "reason": "Dressing contains anchovies (fish); may not be visible on menu"}
-      ],
-      "warnings": [
-        "Kitchen uses pine nuts in pesto — cross-contamination possible for tree nut allergy",
-        "Caesar dressing contains anchovies which some reviewers noted was not clearly listed"
-      ],
-      "overall_risk": "medium",
-      "summary": "Bella Italia is moderately safe with several good options. Avoid pesto dishes if you have tree nut allergies, and confirm Caesar salad dressing ingredients. Margherita pizza and simple pasta dishes are your safest choices."
-    }
+    "experiences": [
+      {
+        "place_id": "demo_italian_bistro",
+        "restaurant_name": "Bella Italia Bistro",
+        "dish_name": "Margherita Pizza",
+        "allergies": ["tree nuts"],
+        "outcome": "safe",
+        "notes": "No tree nuts anywhere near this dish. Staff confirmed and were very allergy-aware.",
+        "created_at": "2026-05-01 13:00:00"
+      },
+      {
+        "place_id": "demo_italian_bistro",
+        "restaurant_name": "Bella Italia Bistro",
+        "dish_name": "Pesto Pasta",
+        "allergies": ["tree nuts"],
+        "outcome": "reaction",
+        "notes": "Contains pine nuts — obvious in hindsight but not listed clearly on the menu. Asked staff to double check.",
+        "created_at": "2026-04-10 19:45:00"
+      }
+    ]
   },
   {
     "place_id": "demo_salad_works",
@@ -60,21 +74,25 @@
     "distance_meters": 150,
     "rating": 4.8,
     "photo_url": null,
-    "overall_risk": "low",
-    "analysis": {
-      "dishes": [
-        {"name": "Classic Garden Salad", "classification": "SAFE", "reason": "Lettuce, tomato, cucumber, carrots — no allergens"},
-        {"name": "Grilled Chicken Bowl", "classification": "SAFE", "reason": "Plain grilled chicken with vegetables, allergen-free preparation area"},
-        {"name": "Quinoa Power Bowl", "classification": "SAFE", "reason": "Quinoa, vegetables, lemon dressing — no common allergens"},
-        {"name": "Avocado Toast", "classification": "SAFE", "reason": "Bread, avocado, lemon — verify bread ingredients if gluten-sensitive"},
-        {"name": "Nut Crunch Salad", "classification": "AVOID", "reason": "Contains mixed nuts as primary ingredient"},
-        {"name": "House Dressing", "classification": "SAFE", "reason": "Oil, vinegar, herbs — no allergens confirmed by staff"}
-      ],
-      "warnings": [
-        "Nut Crunch Salad is prepared at the same station — inform staff to clean before your order"
-      ],
-      "overall_risk": "low",
-      "summary": "Salad Works is an excellent choice with most dishes being allergen-friendly. Staff are allergy-aware and can accommodate requests. Avoid the Nut Crunch Salad and ask them to change gloves when ordering."
-    }
+    "experiences": [
+      {
+        "place_id": "demo_salad_works",
+        "restaurant_name": "Salad Works",
+        "dish_name": "Grilled Chicken Bowl",
+        "allergies": ["peanuts", "tree nuts"],
+        "outcome": "safe",
+        "notes": "They have a dedicated prep area for nut-free orders. Staff changed gloves without being asked.",
+        "created_at": "2026-05-05 12:30:00"
+      },
+      {
+        "place_id": "demo_salad_works",
+        "restaurant_name": "Salad Works",
+        "dish_name": "Quinoa Power Bowl",
+        "allergies": ["gluten"],
+        "outcome": "safe",
+        "notes": "Confirmed GF, no cross-contamination issues. Great option.",
+        "created_at": "2026-04-28 11:00:00"
+      }
+    ]
   }
 ]

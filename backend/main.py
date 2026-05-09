@@ -10,6 +10,7 @@ load_dotenv()
 from models.database import init_db
 from routes.allergy import router as allergy_router
 from routes.restaurants import router as restaurants_router
+from routes.experiences import router as experiences_router
 
 
 @asynccontextmanager
@@ -30,6 +31,7 @@ app.add_middleware(
 
 app.include_router(allergy_router, prefix="/api/allergy", tags=["allergy"])
 app.include_router(restaurants_router, prefix="/api/restaurants", tags=["restaurants"])
+app.include_router(experiences_router, prefix="/api/experiences", tags=["experiences"])
 
 
 @app.get("/api/health")

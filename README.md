@@ -1,38 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AllergyCheck
 
-## Getting Started
+A PWA that helps people with food allergies safely choose restaurants — powered by crowdsourced experiences, not AI guesses.
 
-First, run the development server:
+## What it does
+
+Users set up an allergy profile (selected allergens + freeform notes). The app finds nearby restaurants and shows community-reported experiences from people with the same allergies. Users can submit their own reports after eating somewhere.
+
+**Core flow:**
+1. **Onboarding** — pick allergens + add notes → AI interprets into a structured profile
+2. **Home** — find restaurants nearby, see how many reports each has
+3. **Restaurant detail** — read what people with your allergies experienced, submit your own
+
+**Why community reports, not AI verdicts:**  
+Telling someone a dish is "safe" is a legal liability and a data problem — local restaurants have no structured menu data online. "2 of 3 people with peanut allergy ate here without issue" is a fact. "This dish is Safe" is a claim we can't back up.
+
+## Running locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-
+# Backend (port 8000)
+cd backend
 uvicorn main:app --reload
+
+# Frontend (port 3000) — separate terminal
+npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `backend/.env`:
+```
+BACKBOARD_API_KEY=...
+GOOGLE_PLACES_API_KEY=...
+YELP_API_KEY=...
+DEMO_MODE=false
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Set `DEMO_MODE=true` to run entirely on seeded data (no external API calls) — useful for demos.
 
-## Learn More
+## Tech stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Next.js 16 (App Router), React, Tailwind CSS, PWA
+- **Backend**: FastAPI + SQLite, Python
+- **AI**: Backboard SDK — allergy profile interpreter + experience summarizer
+- **Data**: Google Places API for restaurant discovery
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Frontend → Vercel (`vercel deploy`)
+- Backend → Vultr Cloud Compute (Ubuntu 22.04, Nginx + uvicorn)

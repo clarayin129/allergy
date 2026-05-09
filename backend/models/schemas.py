@@ -18,24 +18,36 @@ class InterpretAllergyResponse(BaseModel):
     structured_profile: AllergyProfile
 
 
-class Dish(BaseModel):
-    name: str
-    classification: str  # SAFE | CAUTION | AVOID
-    reason: str
+class Experience(BaseModel):
+    id: int
+    place_id: str
+    dish_name: str
+    allergies: list[str]
+    outcome: str  # safe | reaction | cautious
+    notes: str
+    created_at: str
 
 
-class RestaurantAnalysis(BaseModel):
-    dishes: list[Dish]
-    warnings: list[str]
-    overall_risk: str  # low | medium | high
-    summary: str
+class ExperienceSummary(BaseModel):
+    total: int
+    safe_count: int
+    reaction_count: int
+    cautious_count: int
+    ai_insight: str
 
 
-class AnalyzeRequest(BaseModel):
-    allergy_profile: AllergyProfile
-    restaurant_name: str = ""
-    restaurant_address: str = ""
-    restaurant_cuisine: str = ""
+class ExperiencesResponse(BaseModel):
+    summary: ExperienceSummary
+    experiences: list[Experience]
+
+
+class SubmitExperienceRequest(BaseModel):
+    place_id: str
+    restaurant_name: str
+    dish_name: str = ""
+    allergies: list[str]
+    outcome: str  # safe | reaction | cautious
+    notes: str = ""
 
 
 class RestaurantSummary(BaseModel):
@@ -46,7 +58,7 @@ class RestaurantSummary(BaseModel):
     distance_meters: float
     rating: float | None = None
     photo_url: str | None = None
-    cached_risk: str | None = None
+    experience_count: int = 0
 
 
 class NearbyResponse(BaseModel):
