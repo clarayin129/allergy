@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getExperiences, ExperiencesResponse, Experience } from "@/lib/api";
 import { loadAllergyProfile, loadRestaurantMeta } from "@/lib/storage";
+import DishRatingList from "@/components/DishRatingList";
 import ExperienceFeed from "@/components/ExperienceFeed";
 import SubmitExperienceForm from "@/components/SubmitExperienceForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -26,7 +27,7 @@ export default function RestaurantDetail() {
       router.replace("/onboarding");
       return;
     }
-    getExperiences(id, allergies)
+    getExperiences(id, allergies, meta?.cuisine)
       .then(setData)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -92,6 +93,11 @@ export default function RestaurantDetail() {
             </div>
           )}
 
+          <DishRatingList ratings={data.dish_ratings ?? []} />
+
+          {data.experiences.length > 0 && (
+            <h2 className="text-sm font-semibold text-gray-700">Community reports</h2>
+          )}
           <ExperienceFeed experiences={data.experiences} />
 
           {!showForm ? (

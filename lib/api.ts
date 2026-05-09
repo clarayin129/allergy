@@ -31,9 +31,17 @@ export interface ExperienceSummary {
   ai_insight: string;
 }
 
+export interface DishRating {
+  name: string;
+  rating: "safe" | "caution" | "avoid";
+  reason: string;
+  from_report: boolean;
+}
+
 export interface ExperiencesResponse {
   summary: ExperienceSummary;
   experiences: Experience[];
+  dish_ratings: DishRating[];
 }
 
 export interface SubmitExperienceRequest {
@@ -79,10 +87,12 @@ export async function getNearbyRestaurants(
 
 export async function getExperiences(
   placeId: string,
-  allergies: string[]
+  allergies: string[],
+  cuisine?: string
 ): Promise<ExperiencesResponse> {
   const params = new URLSearchParams();
   if (allergies.length) params.set("allergies", allergies.join(","));
+  if (cuisine) params.set("cuisine", cuisine);
   const res = await fetch(`${API_BASE}/api/experiences/${placeId}?${params}`);
   if (!res.ok) throw new Error(`Failed to load experiences: ${res.status}`);
   return res.json() as Promise<ExperiencesResponse>;

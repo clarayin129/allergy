@@ -31,6 +31,45 @@ async def interpret_allergy(allergies: list[str], notes: str) -> dict:
     return _extract_json(response.content)
 
 
+async def analyze_dishes(
+    restaurant_name: str,
+    cuisine: str,
+    allergies: list[str],
+    experiences: list,
+) -> list[dict]:
+    if not allergies:
+        return []
+
+    client = BackboardClient(api_key=os.environ["BACKBOARD_API_KEY"])
+
+    experiences_text = (
+        "\n".join(
+            f"- Outcome: {e.outcome}"
+            + (f", Dish: {e.dish_name}" if e.dish_name else "")
+            + (f", Notes: {e.notes}" if e.notes else "")
+            for e in experiences
+        )
+        if experiences
+        else "No community reports yet."
+    )
+
+    system_prompt = (
+        _load_prompt("dish_analyzer.txt")
+        .replace("{restaurant_name}", restaurant_name or "this restaurant")
+        .replace("{cuisine}", cuisine or "this cuisine")
+        .replace("{allergies}", ", ".join(allergies))
+        .replace("{experiences_text}", experiences_text)
+    )
+
+    response = await client.send_message(
+        "Rate the dishes at this restaurant for my allergies.",
+        system_prompt=system_prompt,
+        json_output=True,
+        stream=False,
+    )
+    return _extract_json(response.content).get("dishes", [])
+
+
 async def summarize_experiences(
     restaurant_name: str,
     allergies: list[str],

@@ -36,9 +36,17 @@ class ExperienceSummary(BaseModel):
     ai_insight: str
 
 
+class DishRating(BaseModel):
+    name: str
+    rating: str  # safe | caution | avoid
+    reason: str
+    from_report: bool = False
+
+
 class ExperiencesResponse(BaseModel):
     summary: ExperienceSummary
     experiences: list[Experience]
+    dish_ratings: list[DishRating] = []
 
 
 class SubmitExperienceRequest(BaseModel):

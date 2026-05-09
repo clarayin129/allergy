@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 from pathlib import Path
@@ -7,12 +8,13 @@ from fastapi import APIRouter, HTTPException, Query
 
 from models.database import get_db_path
 from models.schemas import (
+    DishRating,
     Experience,
     ExperienceSummary,
     ExperiencesResponse,
     SubmitExperienceRequest,
 )
-from services.backboard_service import summarize_experiences
+from services.backboard_service import analyze_dishes, summarize_experiences
 
 router = APIRouter()
 
@@ -66,6 +68,7 @@ async def submit_experience(body: SubmitExperienceRequest):
 async def get_experiences(
     place_id: str,
     allergies: str = Query(default=""),
+    cuisine: str = Query(default=""),
 ):
     allergy_filter = [a.strip() for a in allergies.split(",") if a.strip()] if allergies else []
 
@@ -108,11 +111,30 @@ async def get_experiences(
                 if r:
                     restaurant_name = r["restaurant_name"]
 
-    ai_insight = await summarize_experiences(
-        restaurant_name=restaurant_name,
-        allergies=allergy_filter,
-        experiences=experiences,
+    ai_insight, raw_dish_ratings = await asyncio.gather(
+        summarize_experiences(
+            restaurant_name=restaurant_name,
+            allergies=allergy_filter,
+            experiences=experiences,
+        ),
+        analyze_dishes(
+            restaurant_name=restaurant_name,
+            cuisine=cuisine,
+            allergies=allergy_filter,
+            experiences=experiences,
+        ),
     )
+
+    dish_ratings = [
+        DishRating(
+            name=d.get("name", ""),
+            rating=d.get("rating", "caution"),
+            reason=d.get("reason", ""),
+            from_report=d.get("from_report", False),
+        )
+        for d in raw_dish_ratings
+        if d.get("name")
+    ]
 
     return ExperiencesResponse(
         summary=ExperienceSummary(
@@ -123,6 +145,7 @@ async def get_experiences(
             ai_insight=ai_insight,
         ),
         experiences=experiences,
+        dish_ratings=dish_ratings,
     )
 
 
